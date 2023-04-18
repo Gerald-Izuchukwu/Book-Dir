@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const Books = new mongoose.Schema({
+const bookSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Please add a name'],
@@ -8,6 +8,7 @@ const Books = new mongoose.Schema({
         trim: true,
         maximumLength: [100, 'Name of Book should not be longer than 100 characters']
     },
+    slug: String,
     author : {
         type: String,
         required: true,
@@ -24,6 +25,13 @@ const Books = new mongoose.Schema({
         type: String,
         required: true,
         enum: ["Biography", "Contemporary", "Tragedy", "Rural", "Comedy", "Romance"]
-    }
-
+    },
+    about: {
+        type: String,
+        required: true,
+        maximumLength: [500, 'tell us about the book']
+    }    
 })
+
+const Books = mongoose.model('Books', bookSchema)
+export default Books

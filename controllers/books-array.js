@@ -1,4 +1,4 @@
-import Books  from "../models/Books.js";
+import books from '../data/books.js';
 
 export const welcome = (req, res) => {
 	res.status(200).json({
@@ -24,36 +24,11 @@ export const addBook = (req, res) => {
 	});
 };
 
-export const loadBook = async(req, res)=>{
-    try {
-        console.log(req.body);
-        const book = await Books.create(req.body)
-        res.status(201).json({
-            msg: 'Book loaded successfully',
-            data: book
-        })
-    } catch (error) {
-        res.status(400).json({
-            msg: 'there was an error'
-        })
-        console.log(error);
-    }
-}
-
-export const getBooks = async(req, res) => {
-    try {
-        const books = await Books.find()
-        res.status(200).json({
+export const getBooks = (req, res) => {
+	res.status(200).json({
 		name: 'Book Shelf',
-		data: books
+		data: books,
 	});
-    } catch (error) {
-        res.status(400).json({
-            success: false
-        })
-        console.log(error);
-    }
-
 };
 
 export const getBooksById = (req, res) => {

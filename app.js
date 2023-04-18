@@ -8,10 +8,14 @@ import { loggerMiddleware } from './middlewares/logger.js';
 import booksRoute from './routes/books.js';
 import usersRoute from './routes/users.js';
 import connectDB from './data/db.js';
+import colors from 'colors'
+// import { color } from './config/colors.js';
 const app = express();
 const PORT = process.env.PORT  || 9600;
 
 connectDB()
+
+app.use(express.json())
 
 app.use(loggerMiddleware);
 
@@ -21,8 +25,8 @@ app.use('/', usersRoute);
 app.post('/', (req, res) => {});
 
 const server = app.listen(PORT, () => {
-	console.log(`server is running on: ${PORT}`);
-	console.log(process.env.PORT);
+	console.log(`server is running on: ${PORT}`.blue.bold);
+	console.log(process.env.PORT.rainbow);
 });
 
 process.on('unhandledRejection', (reason, promise)=>{
