@@ -1,27 +1,30 @@
 const books = [
     {
         "id": 1,
-        "Name": "The Life and Times of Paul",
-        "Author": "Paul E Triste",
-        "Category": "Non-Fiction",
-        "Genre": "Biography, Contemporary, Tragedy",
-        "About": "Book summary"
+        "name": "The Life and Times of Paul",
+        "author": "Paul E Triste",
+        "category": "Non-Fiction",
+        // "genre": "Biography, Contemporary, Tragedy",
+        "genre": "Biography",
+        "about": "Book summary"
     },
     {
         "id": 2,
-        "Name": "Ajoke the Blind Girl",
-        "Author": "Unknown Story Teller",
-        "Category": "Fiction",
-        "Genre": "Tragedy, Rural",
-        "About": "Book summary"
+        "name": "Ajoke the Blind Girl",
+        "author": "Unknown Story Teller",
+        "category": "Fiction",
+        // "genre": "Tragedy, Rural",
+        "genre": "Tragedy",
+        "about": "Book summary"
     },
     {
         "id": 3,
-        "Name": "When the Truth Calls",
-        "Author": "Madaline B. Smith",
-        "Category": "Fiction",
-        "Genre": "Comedy, Romance",
-        "About":"Book summary"
+        "name": "When the Truth Calls",
+        "author": "Madaline B. Smith",
+        "category": "Fiction",
+        // "genre": "Comedy, Romance",
+        "genre": "Comedy",
+        "about":"Book summary"
     }
 
 ]
