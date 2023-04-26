@@ -21,11 +21,11 @@ const bookSchema = new mongoose.Schema({
         enum: ['Non-Fiction', 'Fiction'],
         required: true
     },
-    genre: {
+    genre: [{
         type: String,
         required: true,
         enum: ["Biography", "Contemporary", "Tragedy", "Rural", "Comedy", "Romance"]
-    },
+    }],
     about: {
         type: String,
         required: true,

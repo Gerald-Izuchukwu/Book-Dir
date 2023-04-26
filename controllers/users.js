@@ -1,14 +1,20 @@
 import users from '../data/users.js';
 import levels from '../data/levels.js';
 
-// export const createUser = async((res, req) => {
-// 	try {
-// 	} catch (error) {
-// 		if (error) {
-// 			console.log(error);
-// 		}
-// 	}
-// });
+export const createUser = async(res, req) => {
+	try {
+		console.log(req.body);
+		const user = await users.create(req.body)
+		res.status(201).json({
+			msg: 'Success: User created',
+			data: user
+		})
+	} catch (error) {
+		if (error) {
+			console.log(error);
+		}
+	}
+};
 
 export const getUsers = async (req, res) => {
 	try {
