@@ -1,10 +1,10 @@
-import users from '../data/users.js';
-import levels from '../data/levels.js';
+import Users from '../models/Users.js'
+import Level from '../models/Levels.js'
 
-export const createUser = async(res, req) => {
+export const createUser = async(req, res) => {
 	try {
 		console.log(req.body);
-		const user = await users.create(req.body)
+		const user = await Users.create(req.body)
 		res.status(201).json({
 			msg: 'Success: User created',
 			data: user
@@ -18,32 +18,33 @@ export const createUser = async(res, req) => {
 
 export const getUsers = async (req, res) => {
 	try {
-		const usersArray = [];
-
-		users.forEach((user) => {
-			const { name, username } = user;
-			usersArray.push({ name, username });
-		});
+		const users = await Users.find()
 		res.status(200).json({
 			msg: 'Successful',
-			data: usersArray,
+			data: users,
 		});
 	} catch (err) {
-		if (err) {
-			console.log(err);
-		}
+		console.log(err);
 	}
 };
 
+export const singleUser = async(req, res)=>{
+	try {
+		const user = await Users.findById(req.params.id)
+		/**if route is protected, ie the request is coming from the user, return users profile else return certain feilds of the user profile */
+		res.status(200).json({
+			data : user
+		})
+	} catch (error) {
+		console.log(error);
+	}
+} 
+
 export const getLevels = async (req, res) => {
 	try {
-		const levelsArray = [];
-		levels.forEach((level) => {
-			const { name, logo } = level;
-			levelsArray.push(name, logo);
-		});
+		const levels = await Level.find()
 		res.status(200).json({
-			data: levelsArray,
+			data: levels,
 		});
 	} catch (err) {
 		if (err) {
@@ -54,21 +55,11 @@ export const getLevels = async (req, res) => {
 
 export const singleLevel = async (req, res) => {
 	try {
-		const levelId = parseInt(req.params.id);
-		const usersArray = [];
-		const levelsArray = [];
-		levels.forEach((level) => {
-			const { name, logo, description } = level;
-			if (levelId === level.id) {
-				levelsArray.push({ name, logo, description });
+		const level = await Level.find({}).select('name, logo, description').exec((err, results)=>{
+			if (err){
+				console.log(err);
 			}
-		});
-		users.forEach((user) => {
-			const { name, username, level } = user;
-			if (levelId === user.level.id) {
-				usersArray.push(name, username);
-			}
-		});
+		})
 		res.status(200).json({
 			msg: 'success',
 			data: {
