@@ -40,36 +40,27 @@ export const singleUser = async(req, res)=>{
 	}
 } 
 
-export const getLevels = async (req, res) => {
+export const getLevels = async (req, res, next) => {
 	try {
 		const levels = await Level.find()
 		res.status(200).json({
 			data: levels,
 		});
 	} catch (err) {
-		if (err) {
-			console.log(err);
-		}
+		next(err)
 	}
 };
 
-export const singleLevel = async (req, res) => {
+export const singleLevel = async (req, res, next) => {
 	try {
-		const level = await Level.find({}).select('name, logo, description').exec((err, results)=>{
-			if (err){
-				console.log(err);
-			}
-		})
+		const level = await Level.findById(req.params.id).select('levelName levelLogo levelDescription').exec()
 		res.status(200).json({
 			msg: 'success',
 			data: {
-				level: levelsArray,
-				more: usersArray,
+				level
 			},
 		});
 	} catch (err) {
-		if (err) {
-			console.log(err);
-		}
+		next(err)
 	}
 };
