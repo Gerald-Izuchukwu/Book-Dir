@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
 function errorHandler(err, req, res, next){
     console.log(err.name);
     console.log(err.message); //this is what is shown to the client
-    console.log(err.stack.red);
+    // console.log(err.stack.red);
+    console.log(err);
 
     // test for mongoose incorrectly formatted id
     if(err.name === 'CastError'){
@@ -16,7 +16,8 @@ function errorHandler(err, req, res, next){
     if(err.name === 'ValidationError' ){
         return res.status(404).json({
             success: false,
-            error: 'Kindly fill all the required fields with the correct information'
+            error: 'Kindly fill all the required fields with the correct information',
+            errorValue: Object.values(err.errors).map(value=>value.message)
         })
     }
 
@@ -28,6 +29,24 @@ function errorHandler(err, req, res, next){
         })
     }
 
+    // Test For Mongo Server Error
+    if(err.name === "MongoServerError" && err.code === 11000){
+        return res.status(400).json({
+            success: false,
+            error: "You are entering a field that is already in the datbase",
+            errorValue: err.keyValue
+        })
+
+    }
+
+    if(err.name === 'MongoServerError' && err.code === 121){
+        return res.status(400).json({
+            success: false,
+            error: "You are entering a document that exceeds the maximum file size"
+        })
+    }
+    
+    
     // if(err.name === 'Error'){
     //     return res.status(404).json({
     //         success: false,
