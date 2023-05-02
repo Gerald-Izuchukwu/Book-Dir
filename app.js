@@ -5,6 +5,7 @@ import express from 'express';
 import * as dotenv from 'dotenv'
 dotenv.config({path: './config/.env'})
 import { loggerMiddleware } from './middlewares/logger.js';
+import errorHandler from './middlewares/error.js';
 import booksRoute from './routes/books.js';
 import usersRoute from './routes/users.js';
 import connectDB from './data/db.js';
@@ -21,6 +22,8 @@ app.use(loggerMiddleware);
 
 app.use('/', booksRoute);
 app.use('/', usersRoute);
+app.use(errorHandler)
+
 
 app.post('/', (req, res) => {});
 

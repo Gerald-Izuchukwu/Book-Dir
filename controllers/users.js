@@ -1,7 +1,8 @@
 import Users from '../models/Users.js'
 import Level from '../models/Levels.js'
+import ErrorResponse from '../utils/errorResponse.js';
 
-export const createUser = async(req, res) => {
+export const createUser = async(req, res, next) => {
 	try {
 		console.log(req.body);
 		const user = await Users.create(req.body)
@@ -10,33 +11,40 @@ export const createUser = async(req, res) => {
 			data: user
 		})
 	} catch (error) {
-		if (error) {
-			console.log(error);
-		}
+		next(error)
 	}
 };
 
-export const getUsers = async (req, res) => {
+export const getUsers = async (req, res, next) => {
 	try {
 		const users = await Users.find()
+		if(!users){
+			return res.status(404).json({
+				success: false,
+				message: 'resource not found'
+			})
+		}
 		res.status(200).json({
 			msg: 'Successful',
 			data: users,
 		});
 	} catch (err) {
-		console.log(err);
+		next(err)
 	}
 };
 
-export const singleUser = async(req, res)=>{
+export const singleUser = async(req, res, next)=>{
 	try {
 		const user = await Users.findById(req.params.id)
 		/**if route is protected, ie the request is coming from the user, return users profile else return certain feilds of the user profile */
+		if(!user){
+			return next(new ErrorResponse(500, `We could not find the resource`))
+		}
 		res.status(200).json({
 			data : user
 		})
 	} catch (error) {
-		console.log(error);
+		next(error)
 	}
 } 
 
@@ -61,6 +69,7 @@ export const singleLevel = async (req, res, next) => {
 			},
 		});
 	} catch (err) {
+		// next(new ErrorResponse(500, `We could not find the resource`))
 		next(err)
 	}
 };

@@ -1,4 +1,5 @@
 import Books  from "../models/Books.js";
+import ErrorResponse from "../utils/errorResponse.js";
 
 export const welcome = (req, res) => {
 	res.status(200).json({
@@ -24,7 +25,7 @@ export const addBook = (req, res) => {
 	});
 };
 
-export const loadBook = async(req, res)=>{
+export const loadBook = async(req, res, next)=>{
     try {
         console.log(req.body);
         const book = await Books.create(req.body)
@@ -33,14 +34,11 @@ export const loadBook = async(req, res)=>{
             data: book
         })
     } catch (error) {
-        res.status(400).json({
-            msg: 'there was an error'
-        })
-        console.log(error);
+		next(error)
     }
 }
 
-export const getBooks = async(req, res) => {
+export const getBooks = async(req, res, next) => {
     try {
         const books = await Books.find()
         res.status(200).json({
@@ -48,33 +46,29 @@ export const getBooks = async(req, res) => {
 		data: books
 	});
     } catch (error) {
-        res.status(400).json({
-            success: false
-        })
+		next(new ErrorResponse(404, `We could not find the resource`))
         console.log(error);
     }
 
 };
 
-export const getBooksById = async (req, res) => {
+export const getBooksById = async (req, res, next) => {
 	try {
 		const bookId = req.params.id
 		const book = await Books.findById(bookId)
 		if (!book) {
 			return res.status(404).json({
-				msg: `Sorry We could not find that book with id: ${bookId}`,
-			});
+				success: false,
+				message: "Resource not found"
+			})
+
 		}
 		res.status(200).json({
 			msg: 'Success',
 			data: book,
 		});
 	} catch (error) {
-		res.status(400).json({
-			success: false,
-			msg: error.name
-		})
-		console.log(error)	
+		next(error)
 	}
 	
 };
@@ -117,10 +111,10 @@ export const getAuthors = async(req, res) => {
 export const deleteBooks = async(req, res) => {
 	try {
 		const book = await Books.findByIdAndDelete(req.params.id)
-		if(!book){
+		if (!book) {
 			return res.status(404).json({
-				success: 'false',
-				msg: 'Sorry such Book doesnt exist in your shelf'
+				success: false,
+				message: "Resource not found"
 			})
 		}
 		res.status(200).json({
@@ -129,12 +123,7 @@ export const deleteBooks = async(req, res) => {
 			data: book
 		})
 	} catch (error) {
-
-		res.status(400).json({
-			success: false,
-			msg: error.name
-		})
-		console.log(error)
+		next(error)
 	}
 
 };
