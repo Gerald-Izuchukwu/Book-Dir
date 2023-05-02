@@ -1,22 +1,18 @@
 import Users from '../models/Users.js'
 import Level from '../models/Levels.js'
+import asyncHandler from '../middlewares/asyncHandler.js';
 import ErrorResponse from '../utils/errorResponse.js';
 
-export const createUser = async(req, res, next) => {
-	try {
+export const createUser = asyncHandler( async(req, res, next) => {
 		console.log(req.body);
 		const user = await Users.create(req.body)
 		res.status(201).json({
 			msg: 'Success: User created',
 			data: user
 		})
-	} catch (error) {
-		next(error)
-	}
-};
+});
 
-export const getUsers = async (req, res, next) => {
-	try {
+export const getUsers = asyncHandler (async (req, res, next) => {
 		const users = await Users.find()
 		if(!users){
 			return res.status(404).json({
@@ -28,13 +24,9 @@ export const getUsers = async (req, res, next) => {
 			msg: 'Successful',
 			data: users,
 		});
-	} catch (err) {
-		next(err)
-	}
-};
+});
 
-export const singleUser = async(req, res, next)=>{
-	try {
+export const singleUser = asyncHandler (async(req, res, next)=>{
 		const user = await Users.findById(req.params.id)
 		/**if route is protected, ie the request is coming from the user, return users profile else return certain feilds of the user profile */
 		if(!user){
@@ -43,24 +35,17 @@ export const singleUser = async(req, res, next)=>{
 		res.status(200).json({
 			data : user
 		})
-	} catch (error) {
-		next(error)
-	}
-} 
+}) 
 
-export const getLevels = async (req, res, next) => {
-	try {
+export const getLevels = asyncHandler(async (req, res, next) => {
 		const levels = await Level.find()
 		res.status(200).json({
 			data: levels,
 		});
-	} catch (err) {
-		next(err)
-	}
-};
 
-export const singleLevel = async (req, res, next) => {
-	try {
+});
+
+export const singleLevel = asyncHandler (async (req, res, next) => {
 		const level = await Level.findById(req.params.id).select('levelName levelLogo levelDescription').exec()
 		res.status(200).json({
 			msg: 'success',
@@ -68,8 +53,5 @@ export const singleLevel = async (req, res, next) => {
 				level
 			},
 		});
-	} catch (err) {
-		// next(new ErrorResponse(500, `We could not find the resource`))
-		next(err)
-	}
-};
+
+});
