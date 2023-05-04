@@ -47,6 +47,12 @@ export const getLevels = asyncHandler(async (req, res, next) => {
 
 export const singleLevel = asyncHandler (async (req, res, next) => {
 		const level = await Level.findById(req.params.id).select('levelName levelLogo levelDescription').exec()
+		if(!level){
+			return res.status(404).json({
+				success: false,
+				message: 'Resource not found'
+			})
+		}
 		res.status(200).json({
 			msg: 'success',
 			data: {
@@ -55,3 +61,20 @@ export const singleLevel = asyncHandler (async (req, res, next) => {
 		});
 
 });
+
+export const uploadLevelPhoto = asyncHandler(async(req, res, next)=>{
+	const level = await Level.findById(req.params.id)
+	if(!level){
+		return res.status(404).json({
+			success: false,
+			message: 'Resource not found'
+		})
+	}
+
+	if(!req.files){
+		return res.status(404).json({
+			success: false,
+			message: 'please upload a correct image file type'
+		})
+	}
+})

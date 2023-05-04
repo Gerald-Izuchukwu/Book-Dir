@@ -80,6 +80,22 @@ export const getBooksById = asyncHandler(async (req, res, next) => {
 	
 });
 
+
+export const deleteBooks = asyncHandler(async(req, res) => {
+		const book = await Books.findByIdAndDelete(req.params.id)
+		if (!book) {
+			return res.status(404).json({
+				success: false,
+				message: "Resource not found"
+			})
+		}
+		res.status(200).json({
+			success: 'true',
+			msg: 'Book Removed from shelf',
+			data: book
+		})
+});
+
 export const getAuthors = asyncHandler(async(req, res, next) => {
 	const authors = await Authors.find(req.query).populate({
 		path: 'books',
@@ -116,18 +132,3 @@ export const getSingleAuthor = asyncHandler(async(req, res, next)=>{
 		data: author
 	})
 })
-
-export const deleteBooks = asyncHandler(async(req, res) => {
-		const book = await Books.findByIdAndDelete(req.params.id)
-		if (!book) {
-			return res.status(404).json({
-				success: false,
-				message: "Resource not found"
-			})
-		}
-		res.status(200).json({
-			success: 'true',
-			msg: 'Book Removed from shelf',
-			data: book
-		})
-});
