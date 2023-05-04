@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import slug from "slug"
 
 const bookSchema = new mongoose.Schema({
     name: {
@@ -31,6 +32,13 @@ const bookSchema = new mongoose.Schema({
         required: true,
         maximumLength: [500, 'tell us about the book']
     }    
+})
+
+// creating book slug
+bookSchema.pre('save', function(next) {
+    this.slug = slug(this.name, {lower: true})
+    console.log('Slug ran on ' + this.name );
+    next()
 })
 
 bookSchema.index({author: 1, name: 1}, {unique: true})

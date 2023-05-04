@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Level from "./Levels.js"; //importing Levels Model
+import slug from "slug";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -27,6 +28,13 @@ const userSchema = new mongoose.Schema({
         required: true
     }
 
+    
+})
+
+userSchema.pre('save', function (next) {
+    this.slug = slug(this.name, {lower:true})
+    console.log('Slug ran on ' + this.name );
+    next()
     
 })
 

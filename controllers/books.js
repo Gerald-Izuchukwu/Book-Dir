@@ -1,4 +1,5 @@
 import Books  from "../models/Books.js";
+import Authors from "../models/Authors.js"
 import ErrorResponse from "../utils/errorResponse.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 
@@ -36,11 +37,27 @@ export const loadBook = asyncHandler(async(req, res, next)=>{
 })
 
 export const getBooks = asyncHandler(async(req, res, next) => {
-        const books = await Books.find()
-        res.status(200).json({
-			name: 'Book Shelf',
-			data: books
-		})
+	// const removedParams = ['select']
+	// const query = {...req.query}
+	const removedParams = ['select']
+	const {[removedParams]:deletedParam, ...query} = req.query
+
+	if(req.query.select){
+		const fields = req.query.select.split(',').join(' ')
+		// console.log(deletedParam);
+		console.log(query.removedParams);
+		// query= query.removedParams(fields)
+		// console.log(fields);
+	}
+
+	const books = await Books.find(query)
+	// console.log(query);
+	// console.log(req.query);
+	res.status(200).json({
+		name: 'Book Shelf',
+		message: `This request found ${books.length} results`,
+		data: books
+	})
 
 });
 
@@ -56,36 +73,49 @@ export const getBooksById = asyncHandler(async (req, res, next) => {
 		}
 		res.status(200).json({
 			msg: 'Success',
+			message: `This request found ${book.length} results`,
 			data: book,
 		});
 
 	
 });
 
-export const getAuthors = asyncHandler(async(req, res) => {
-		const bookAuthors = [];
-		const anotherauthor = []
-		const authors = await Books.findOne()
-		console.log(authors);
-		console.log('------');
-		console.log(bookAuthors);
-		bookAuthors.push(authors)
-		bookAuthors.forEach((author)=>{
-			anotherauthor.push(author)
-			console.log('push happening');
-			console.log(authors);
-			console.log('------');
-			console.log(bookAuthors);
-			console.log('--------------------------');
-			console.log(anotherauthor);
+export const getAuthors = asyncHandler(async(req, res, next) => {
+	const authors = await Authors.find(req.query).populate({
+		path: 'books',
+		select: 'name category about'
+	})
+	if(!authors){
+		return res.status(404).json({
+			success : false,
+			message: "Resource not found"
 		})
+	}
+	res.status(200).json({
+		success: true,
+		count: `This request returned ${authors.length} result`,
+		data: authors
+	})
 
-		res.status(200).json({
-			name: 'Authors',
-			// data: bookAuthors
-		});
-		// console.log(bookAuthors);
+
 });
+
+export const getSingleAuthor = asyncHandler(async(req, res, next)=>{
+	const author = await Authors.findById(req.params.id).populate({
+		path: 'books',
+		select: 'name category about'
+	})
+	if(!author){
+		return res.status(404).json({
+			success: false,
+			message: 'Resource not found'
+		})
+	}
+	res.status(200).json({
+		success : true,
+		data: author
+	})
+})
 
 export const deleteBooks = asyncHandler(async(req, res) => {
 		const book = await Books.findByIdAndDelete(req.params.id)

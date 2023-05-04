@@ -10,6 +10,7 @@ import booksRoute from './routes/books.js';
 import usersRoute from './routes/users.js';
 import connectDB from './data/db.js';
 import colors from 'colors'
+import fileUpload from 'express-fileupload';
 // import { color } from './config/colors.js';
 const app = express();
 const PORT = process.env.PORT  || 9600;
@@ -19,7 +20,7 @@ connectDB()
 app.use(express.json())
 
 app.use(loggerMiddleware);
-
+app.use(fileUpload)
 app.use('/', booksRoute);
 app.use('/', usersRoute);
 app.use(errorHandler)

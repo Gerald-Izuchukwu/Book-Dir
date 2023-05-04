@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import slug from "slug";
 
-export const Authors = new mongoose.Schema({
+export const AuthorsSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, "please add a name"],
@@ -13,8 +14,24 @@ export const Authors = new mongoose.Schema({
         maximumLength: [500, 'tell us about the author']
 
     },
-    works: {
-        type: String,
+    books: {
+        type: [mongoose.Schema.ObjectId],
+        ref: 'Books',
         required: false,
+    },
+    works: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Books',
+        required: true
     }
 })
+
+AuthorsSchema.pre('save', function (next) {
+    this.slug = slug(this.name, {lower: true})
+    console.log('Slug ran on ' + this.name );
+    next()
+    
+})
+
+const Authors = mongoose.model('Authors', AuthorsSchema)
+export default Authors

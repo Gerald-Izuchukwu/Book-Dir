@@ -13,7 +13,7 @@ export const createUser = asyncHandler( async(req, res, next) => {
 });
 
 export const getUsers = asyncHandler (async (req, res, next) => {
-		const users = await Users.find()
+		const users = await Users.find(req.query)
 		if(!users){
 			return res.status(404).json({
 				success: false,
@@ -38,7 +38,7 @@ export const singleUser = asyncHandler (async(req, res, next)=>{
 }) 
 
 export const getLevels = asyncHandler(async (req, res, next) => {
-		const levels = await Level.find()
+		const levels = await Level.find(req.query)
 		res.status(200).json({
 			data: levels,
 		});

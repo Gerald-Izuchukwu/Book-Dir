@@ -22,7 +22,7 @@ function errorHandler(err, req, res, next){
     }
 
     // Test for MongoError
-    if(err.name === "MongoError"){
+    if(err.name === "MongoError" || 'MongoServerSelectionError'){
         return res.status(404).json({
             success: false,
             error: 'Sorry, there was an error connecting to the database'
@@ -33,7 +33,7 @@ function errorHandler(err, req, res, next){
     if(err.name === "MongoServerError" && err.code === 11000){
         return res.status(400).json({
             success: false,
-            error: "You are entering a field that is already in the datbase",
+            error: "You are entering a field that is already in the database",
             errorValue: err.keyValue
         })
 
