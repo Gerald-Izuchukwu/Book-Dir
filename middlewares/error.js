@@ -1,5 +1,5 @@
 function errorHandler(err, req, res, next){
-    console.log(err.name);
+    console.log(err.name.red);
     console.log(err.message); //this is what is shown to the client
     // console.log(err.stack.red);
     console.log(err);
@@ -22,7 +22,7 @@ function errorHandler(err, req, res, next){
     }
 
     // Test for MongoError
-    if(err.name === "MongoError" || 'MongoServerSelectionError'){
+    if(err.name === "MongoError" || 'MongoServerSelectionError' && err.name !== "MongoServerError"){
         return res.status(404).json({
             success: false,
             error: 'Sorry, there was an error connecting to the database'

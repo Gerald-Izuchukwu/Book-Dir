@@ -2,15 +2,49 @@ import Users from '../models/Users.js'
 import Level from '../models/Levels.js'
 import asyncHandler from '../middlewares/asyncHandler.js';
 import ErrorResponse from '../utils/errorResponse.js';
+import PasswordValidator from 'password-validator';
+import EmailValidator from "email-validator";
 
+// please clean up this controller maybe with model.validate
 export const createUser = asyncHandler( async(req, res, next) => {
-		console.log(req.body);
-		const user = await Users.create(req.body)
+	console.log(req.body);
+	const {name, password, username, email, role} = req.body
+	const validEmail = EmailValidator.validate(email)
+	const validPassword = new PasswordValidator()
+	validPassword
+		.is().min(6)
+		.has().uppercase()
+		.has().lowercase()
+		.has().digits()
+		.has().symbols()
+
+	const isValidPassword = validPassword.validate(password)
+
+	if(!validEmail){
+		return res.status(400).json({
+			success: false,
+			message: 'Wrong email format'
+		})
+	}
+
+	if(!isValidPassword){
+		return res.status(400).json({
+			success: false,
+			message: "Please enter a minimum of 6 character password that has a number, a special character and uppercase and lowercase letters"
+		})
+	}
+	if (validEmail && isValidPassword){
+		const user = await Users.create({name, password, username, email, role})
+		const token = user.getSignedJWTtoken()
 		res.status(201).json({
 			msg: 'Success: User created',
-			data: user
+			data: user,
+			token
 		})
+	}
+	
 });
+
 
 export const getUsers = asyncHandler (async (req, res, next) => {
 		const users = await Users.find(req.query)

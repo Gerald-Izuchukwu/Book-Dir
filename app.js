@@ -20,7 +20,7 @@ connectDB()
 app.use(express.json())
 
 app.use(loggerMiddleware);
-app.use(fileUpload)
+// app.use(fileUpload)
 app.use('/', booksRoute);
 app.use('/', usersRoute);
 app.use(errorHandler)
