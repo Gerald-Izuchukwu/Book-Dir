@@ -1,7 +1,6 @@
+.env
 node_modules/
 try/
-config.env
-test
+test.js
 Dockerfile
 docker-compose.yaml
-build.js

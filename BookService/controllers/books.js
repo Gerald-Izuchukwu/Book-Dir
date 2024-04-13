@@ -50,7 +50,51 @@ export class Book {
 		})
 
 	})
-	addBook = asyncHandler(async (req, res)=> {
+	rentBook = asyncHandler(async(req, res, next)=>{
+		const {ids, duration} = req.body
+		// const user = req.email
+		const user = 'me'
+		const createdOrderArray = []
+		const cantBeRentedArray =[]
+		const books = await Books.find({_id: {$in: ids}})
+		books.filter((book)=>{
+			if(book.canRent === false){
+				cantBeRentedArray.push(book.id)
+			}
+		})
+		if(cantBeRentedArray.length>0){
+			console.log(cantBeRentedArray)
+			return res.status(400).json({
+				message: "These books cannot be rented",
+				books: cantBeRentedArray
+			})
+		}
+		await rabbitConnect().then((channel)=>{
+			channel.sendToQueue("RENT", Buffer.from(JSON.stringify({books, duration, user})))
+			console.log('sending book to RENT queue')
+			console.log(books)
+			return
+		}).then(()=>{
+			axios.post("http://localhost:9803/api/v1/bookdir/rent-book").catch((err)=>{console.log(err.message);})
+		})
+
+		rabbitConnect().then((channel)=>{
+			channel.consume("BOOK", (data)=>{
+				console.log('consuming PRODUCT queue');
+				const createdOrder =  JSON.parse(data.content)
+                createdOrderArray.push(createdOrder)
+                console.log(JSON.parse(data.content));
+                channel.ack(data)
+
+			})
+			setTimeout(()=>{
+                channel.close()
+                return res.status(200).json(createdOrderArray[0])
+
+            }, 2000)
+		})
+	})
+	addBook = asyncHandler(async (req, res)=> { //maybe to add book to your shelf
 		const book = await Books.findById(req.params.id)
 		if(!book){
 			console.log('Book does not exist')
@@ -63,6 +107,7 @@ export class Book {
 		if(req.user.role !== "publisher"){
 			console.log("User cant upload books");
 		}
+		res.sendFile(__dirname + '/index.html') 
         console.log(req.body);
         const book = await Books.create(req.body)
         res.status(201).json({
@@ -101,13 +146,12 @@ export class Book {
 		}
 		res.status(200).json({
 			msg: 'Success',
-			message: `This request found ${book.length} results`,
 			data: book,
 		});
 	});
 
 	deleteBooks = asyncHandler(async(req, res) => {
-		const book = await Books.deleteMany(r)
+		const book = await Books.deleteMany()
 		res.status(200).json({
 			success: 'true',
 			msg: 'Book Removed from shelf',
@@ -164,130 +208,3 @@ export class Book {
 	});
 	
 }
-
-
-
-// export const welcome = (req, res) => {
-// 	res.status(200).json({
-// 		name: 'Book Dir',
-// 		dateStarted: '14/03/2023',
-// 		currentDate: new Date().toISOString(),
-// 	});
-// };
-
-// // this route is to add books to a users shelf and to upload a book
-// export const addBook = (req, res) => {
-// 	const myBooks = [];
-// 	books.forEach((book) => {
-// 		const bookId = parseInt(req.params.id);
-// 		if (bookId === book.id) {
-// 			myBooks.push(book);
-// 			console.log('book-added');
-// 		}
-// 		res.status(201).json({
-// 			msg: 'Book Added to your Shelf',
-// 			data: book,
-// 		});
-// 	});
-
-	
-	
-// };
-
-// export const loadBook = asyncHandler(async(req, res, next)=>{
-//         console.log(req.body);
-//         const book = await Books.create(req.body)
-//         res.status(201).json({
-//             msg: 'Book loaded successfully',
-//             data: book
-//         })
-// })
-
-// export const getBooks = asyncHandler(async(req, res, next) => {
-
-// 	const removedParams = ['select']
-// 	const {[removedParams]:deletedParam, ...query} = req.query
-
-// 	if(req.query.select){
-// 		const fields = req.query.select.split(',').join(' ')
-// 		console.log(query.removedParams);
-// 	}
-
-// 	const books = await Books.find(query)
-// 	res.status(200).json({
-// 		name: 'Book Shelf',
-// 		message: `This request found ${books.length} results`,
-// 		data: books
-// 	})
-
-// });
-
-// export const getBooksById = asyncHandler(async (req, res, next) => {
-// 		const bookId = req.params.id
-// 		const book = await Books.findById(bookId)
-// 		if (!book) {
-// 			return res.status(404).json({
-// 				success: false,
-// 				error: "Resource not found"
-// 			})
-
-// 		}
-// 		res.status(200).json({
-// 			msg: 'Success',
-// 			message: `This request found ${book.length} results`,
-// 			data: book,
-// 		});
-
-	
-// });
-
-
-// export const deleteBooks = asyncHandler(async(req, res) => {
-// 	const book = await Books.findByIdAndDelete(req.params.id)
-// 	if (!book) {
-// 		return res.status(404).json({
-// 			success: false,
-// 			message: "Resource not found"
-// 		})
-// 	}
-// 	res.status(200).json({
-// 		success: 'true',
-// 		msg: 'Book Removed from shelf',
-// 		data: book
-// 	})
-// });
-
-// export const getAuthors = asyncHandler(async(req, res, next) => {
-// 	const authors = await Authors.find(req.query).populate({
-// 		path: 'books',
-// 		select: 'name category about'
-// 	})
-// 	if(!authors){
-// 		return res.status(404).json({
-// 			success : false,
-// 			message: "Resource not found"
-// 		})
-// 	}
-// 	res.status(200).json({
-// 		success: true,
-// 		count: `This request returned ${authors.length} result`,
-// 		data: authors
-// 	})
-// });
-
-// export const getSingleAuthor = asyncHandler(async(req, res, next)=>{
-// 	const author = await Authors.findById(req.params.id).populate({
-// 		path: 'books',
-// 		select: 'name category about'
-// 	})
-// 	if(!author){
-// 		return res.status(404).json({
-// 			success: false,
-// 			message: 'Resource not found'
-// 		})
-// 	}
-// 	res.status(200).json({
-// 		success : true,
-// 		data: author
-// 	})
-// })

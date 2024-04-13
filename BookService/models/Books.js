@@ -36,6 +36,11 @@ const bookSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    canRent: {
+        type: Boolean,
+        default: true
+    },
+    rentPrice: Number,
     discount: {
         type: Boolean,
         default: false
@@ -49,7 +54,17 @@ bookSchema.pre('save', function(next) {
     next()
 })
 
-bookSchema.index({author: 1, name: 1}, {unique: true})
+bookSchema.pre('save', function(next){
+    if(this.rentPrice===undefined){
+        this.rentPrice = ((this.price/3).toFixed(2))
+    }else{
+        this.rentPrice = this.rentPrice
+    }
+    console.log('calc rent price')
+    next()
+})
+
+bookSchema.index({author: 1, name: 1}, {unique: true}) //prevents more than one document with the same autor and name
 
 const Books = mongoose.model('Books', bookSchema)
 export default Books

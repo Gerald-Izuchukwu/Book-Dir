@@ -5,10 +5,10 @@ import Authors from "../models/Authors.js";
 import authors from "../data/authors.js";
 import Books from "../models/Books.js";
 import books from "../data/books.js";
-import Users from "../models/Users.js";
-import users from "../data/users.js"
-import Level from "../models/Levels.js";
-import levels from "../data/levels.js"
+// import Users from "../models/Users.js";
+// import users from "../data/users.js"
+// import Level from "../models/Levels.js";
+// import levels from "../data/levels.js"
 import colors from 'colors'
 const seederAdd = async()=>{
     console.log("mongodb://localhost:27017/BookService");
@@ -25,12 +25,12 @@ const seederAdd = async()=>{
     }).catch((error)=>{
         console.log(error);
     })   
-    await Level.insertMany(levels).then((docs)=>{
-        console.log('Levels seeded succesfully'.green);
-        // process.exit()
-    }).catch((error)=>{
-        console.log(error);
-    })
+    // await Level.insertMany(levels).then((docs)=>{
+    //     console.log('Levels seeded succesfully'.green);
+    //     // process.exit()
+    // }).catch((error)=>{
+    //     console.log(error);
+    // })
     // await Users.insertMany(users).then((docs)=>{
     //     console.log('Users seeded succesfully'.blue);
     //     // process.exit()
@@ -63,12 +63,12 @@ const seederDel = async()=>{
     // }).catch((error)=>{
     //     console.log(error);
     // })
-    await Level.deleteMany().then((docs)=>{
-        console.log('Levels Deleted Successfully'.red);
-        // process.exit()
-    }).catch((error)=>{
-        console.log(error);
-    })
+    // await Level.deleteMany().then((docs)=>{
+    //     console.log('Levels Deleted Successfully'.red);
+    //     // process.exit()
+    // }).catch((error)=>{
+    //     console.log(error);
+    // })
     process.exit()
 
 }

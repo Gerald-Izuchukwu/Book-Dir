@@ -7,7 +7,10 @@ const books = [
         "category": "Non-Fiction",
         "genre": ["Biography", "Contemporary", "Tragedy",],
         "about": "Book summary",
-        "price": 500
+        "price": 500,
+        "canRent": true,
+        "rentPrice": 200
+
     },
     {
         "_id": "64537bf7ab60e8a0f296da09",
@@ -17,7 +20,9 @@ const books = [
         "category": "Fiction",
         "genre": ["Tragedy", "Rural",],
         "about": "Book summary",
-        "price": 0
+        "price": 0,
+        "canRent": true,
+        "rentPrice": 0
     },
     {
         "_id": "64537bf7ab60e8a0f296da0a",
@@ -27,7 +32,9 @@ const books = [
         "category": "Fiction",
         "genre": ["Comedy", "Romance"],
         "about":"Book summary",
-        "price": 250
+        "price": 250,
+        "canRent": true,
+        "rentPrice": 150
     },
     {
         "_id": "64537da70358f075f1a2a06a",
@@ -37,7 +44,9 @@ const books = [
         "category": "Fiction",
         "genre": ["Comedy", "Romance",],
         "about":"Book summary",
-        "price": 300
+        "price": 300,
+        "canRent": false,
+        "rentPrice": 150
     },
 
     {
@@ -48,7 +57,8 @@ const books = [
         "category": "Non-Fiction",
         "genre": ["Biography", "Contemporary", "Tragedy",],
         "about":"Book summary",
-        "price": 800
+        "price": 800,
+        "canRent": false
     },
 
 ]

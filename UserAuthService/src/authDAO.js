@@ -6,7 +6,7 @@ export async function findUser(email, done) {
         done(null, userFetched)
     } catch (error) {
         console.error(error.message);
-        done(error, null);
+        done(error);
         
     }    
 }
@@ -17,8 +17,7 @@ export async function addUser (userData, done){
         done(null, userData)
     
     } catch (error) {
-        console.log(error.message)
-        done(error.message, null)
+        console.log(error)
+        done(error, null)
     }
 }
-

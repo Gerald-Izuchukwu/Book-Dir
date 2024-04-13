@@ -37,6 +37,7 @@ export const registerUsers = async(req, res)=>{
     try {
         const {name,  email, password} = req.body
         if(!name ||  !email || !password){
+            console.log('Fill In All Fields')
             return res.status(200).send('Please fill in all fields')
         }
         const validEmail = await validateEmail(email)
@@ -88,7 +89,8 @@ export const loginUser = async(req, res)=>{
     try {
         const {email, password} = req.body
         console.log(email, password);
-        loginService({email, password}, (err, result)=>{
+        const userData = {email, password}
+        loginService(userData, (err, result)=>{
             if(err){
                 console.log(err);
                 return res.status(400).send(err)
@@ -104,4 +106,8 @@ export const loginUser = async(req, res)=>{
         })
     }
 
+}
+
+export const bittch = (req, res)=>{
+    return res.status(200).send(process.env.AUTH_SECRET)
 }

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-const secret = process.env.AUTH_SECRET
+const secret = process.env.AUTH_SECRET || 'tryEverythingwithlove'
 import {findUser, addUser} from './authDAO.js'
 import bcrypt from 'bcryptjs'
 
@@ -11,6 +11,7 @@ export const verifyToken = (req, res, next)=>{
     }
     try {
         const decoded = jwt.verify(token, secret )
+        console.log(secret)
         req.claims = token
     } catch (error) {
         return res.status(401).send('Invalid Token')
@@ -23,25 +24,31 @@ export const verifyService = (userData, done)=>{
     if(userData===undefined){
         return false
     }else{
-        findUser(userData.email, async(err, result)=>{
-            if(err){
-                return err
-            }else{ //use bcrypt here to compare password
-                const passwordMatch = await bcrypt.compare(userData.password, result.password)
-                if(!passwordMatch){
-                    return done("Incorrect password")
+        findUser(userData.email, async(err, userFetched)=>{
+            try {
+                if(err){
+                    return err
+                }else{ //use bcrypt here to compare password
+                    console.log(secret)
+                    const passwordMatch = await bcrypt.compare(userData.password, userFetched[0].password)
+                    if(!passwordMatch){
+                        return done("Incorrect password")
+                    }
+                    return done(null, userFetched)
                 }
-                return done(null, result)
+            } catch (error) {
+                console.log(error.message)
+                return done(error.message)
             }
         })
     }
 }
 
-export const createJWT = ()=>{
+export const createJWT = (userVerfied)=>{
     const payload = {
-        role : 'USER',
-        email: 'userVerfied.email',
-        name: 'userVerfied.name'
+        role : userVerfied[0].role,
+        email: userVerfied[0].email,
+        name: userVerfied[0].name
     }
     const token = jwt.sign(payload, secret, {
         expiresIn: 3600
@@ -79,10 +86,12 @@ export const loginService = ({email, password}, done)=>{
         }
         if(userVerfied){
             const jwtToken = createJWT(userVerfied)
+            console.log(jwtToken)
             done(null, jwtToken)
         }else{
             done({error: "User not verfied"})
         }
     })
 }
+
 

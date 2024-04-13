@@ -9,10 +9,7 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Please input a name'],
 
     },
-    username: {
-        type: String,
-        unique: true
-    },
+
     level : {
         type: String,
         enum : ['Beginner Reader', 'Intermediate Reader', 'Friendly Reader', 'Top Reader', 'Ultimate Reader',],

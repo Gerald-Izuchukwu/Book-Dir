@@ -1,27 +1,26 @@
-import express, { urlencoded } from 'express';
 import * as dotenv from 'dotenv'
 dotenv.config({path: './config/.env'})
+import express, { urlencoded } from 'express';
 import { loggerMiddleware } from './middlewares/logger.js';
 // import errorHandler from './middlewares/error.js';
 import booksRoute from './routes/books.js';
-// import usersRoute from './routes/users.js';
 import connectDB from './database/db.js';
-// import authRoute from './routes/auth.js'
 import colors from 'colors'
 import fileUpload from 'express-fileupload';
+import rabbitConnect from './rabbitConnect.js';
 // import verifyToken from './controllers/authMiddleware.js';
 // import { color } from './config/colors.js';
 const app = express();
 const PORT = process.env.PORT  || 9800;
 
-
+rabbitConnect()
 connectDB()
 app.set('view-engine', 'ejs')
 app.use(express.json())
 app.use(urlencoded({extended:false}))
 
 app.use(loggerMiddleware);
-// app.use(fileUpload)
+app.use(fileUpload())
 // app.use('/auth', authRoute)
 app.use('/api/v1/bookdir/',  booksRoute);
 // app.use('/', verifyToken, usersRoute);

@@ -1,6 +1,6 @@
 import axios from "axios"
-import rabbitConnect from "../rabbitConnect.js"
-import Orders from "../models/OrderModel.js"
+import rabbitConnect from "./rabbitConnect.js"
+import Orders from "./OrderModel.js"
 
 class Order{
     placeOrder = async function(req, res, next) {   
@@ -24,8 +24,13 @@ class Order{
                         console.log('Sending to BOOK Queue');
                         channel.sendToQueue("BOOK", Buffer.from(JSON.stringify({data})))
                     })
+                    channel.ack(data)
+
 
                 })
+                setTimeout(()=>{
+                    channel.close()
+                }, 2000)
             })
         } catch (error) {
             console.log(error)

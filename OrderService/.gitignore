@@ -1,1 +1,7 @@
-config/
+config.env
+node_modules/
+try/
+test
+Dockerfile
+docker-compose.yaml
+build.js
