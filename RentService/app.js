@@ -6,7 +6,7 @@ import colors from "colors"
 import router from './src/rentRoute.js'
 import rabbitConnect from './src/rabbitConnect.js'
 const app = express()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 9803
 
 rabbitConnect()
 connectDB()

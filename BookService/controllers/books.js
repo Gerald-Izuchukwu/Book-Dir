@@ -80,7 +80,7 @@ export class Book {
 
 		rabbitConnect().then((channel)=>{
 			channel.consume("BOOK", (data)=>{
-				console.log('consuming PRODUCT queue');
+				console.log('consuming BOOK queue');
 				const createdOrder =  JSON.parse(data.content)
                 createdOrderArray.push(createdOrder)
                 console.log(JSON.parse(data.content));
